@@ -229,18 +229,10 @@ public class CameraControllerV4 : MonoBehaviour
 
     #region Input Blocking Logic
 
-    // Per-pointer check used at input-start (mouse-down / touch-began / scroll).
-    bool IsPointerBlocked(Vector2 screenPos)
-    {
-        if (!blockWhenOverUI && !blockWhenOver3DObject)
-            return false;
-
-        if (blockWhenOverUI && PointerIsOverInteractiveUI(screenPos))
-            return true;
-        if (blockWhenOver3DObject && IsPointerOver3DObject(screenPos))
-            return true;
-        return false;
-    }
+    // Per-gesture blocking is applied inline at each input down-edge:
+    //   - Orbit / single-finger drag: blocked by interactive UI AND by 3D objects on blockingLayers.
+    //   - Pan / zoom / pinch: blocked by interactive UI only (3D objects pass through).
+    //   - Double-tap focus: suppressed over interactive UI only (fires over 3D objects).
 
     bool PointerIsOverInteractiveUI(Vector2 screenPos)
     {
@@ -310,12 +302,21 @@ public class CameraControllerV4 : MonoBehaviour
     {
         // --- Orbit (Left Mouse) ---
         // Gate on blocking only at the down-edge; once a drag starts it runs to button-up.
-        if (Input.GetMouseButtonDown(0) && !IsPointerBlocked(Input.mousePosition))
+        if (Input.GetMouseButtonDown(0))
         {
-            _lastMousePos = Input.mousePosition;
-            _isOrbiting = true;
-            if (enableFocus)
-                RegisterClick(Input.mousePosition);
+            // Double-tap is suppressed over interactive UI but still fires over 3D objects.
+            bool uiBlocked = blockWhenOverUI && PointerIsOverInteractiveUI(Input.mousePosition);
+            // A press over UI breaks any pending double-tap chain so it can't bridge two off-UI taps.
+            if (uiBlocked)
+                _clickCount = 0;
+            bool didFocus = enableFocus && !uiBlocked && RegisterClick(Input.mousePosition);
+
+            // Orbit is blocked by UI and by 3D objects; don't re-arm it if a focus reset just fired.
+            if (!didFocus && !uiBlocked && !(blockWhenOver3DObject && IsPointerOver3DObject(Input.mousePosition)))
+            {
+                _lastMousePos = Input.mousePosition;
+                _isOrbiting = true;
+            }
         }
 
         if (Input.GetMouseButton(0) && _isOrbiting)
@@ -347,7 +348,7 @@ public class CameraControllerV4 : MonoBehaviour
         }
 
         // --- Pan (Right Mouse) ---
-        if (Input.GetMouseButtonDown(1) && !IsPointerBlocked(Input.mousePosition))
+        if (Input.GetMouseButtonDown(1) && !(blockWhenOverUI && PointerIsOverInteractiveUI(Input.mousePosition)))
         {
             _lastMousePos = Input.mousePosition;
             _isPanning = true;
@@ -371,7 +372,7 @@ public class CameraControllerV4 : MonoBehaviour
 
         // --- Zoom (Scroll Wheel) ---
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (Mathf.Abs(scroll) > 0.0001f && !IsPointerBlocked(Input.mousePosition))
+        if (Mathf.Abs(scroll) > 0.0001f && !(blockWhenOverUI && PointerIsOverInteractiveUI(Input.mousePosition)))
         {
             // ~5% per notch baseline (Three.js convention), scaled by zoomSpeedMouse.
             float zoomFactor = Mathf.Pow(0.95f, scroll * zoomSpeedMouse * 10f);
@@ -419,16 +420,16 @@ public class CameraControllerV4 : MonoBehaviour
 
             if (touch.phase == TouchPhase.Began)
             {
-                if (IsPointerBlocked(touch.position))
-                {
-                    _touchOrbitActive = false;
-                }
-                else
-                {
-                    _touchOrbitActive = true;
-                    if (enableFocus)
-                        RegisterClick(touch.position);
-                }
+                // Double-tap is suppressed over interactive UI but still fires over 3D objects.
+                bool uiBlocked = blockWhenOverUI && PointerIsOverInteractiveUI(touch.position);
+                // A touch over UI breaks any pending double-tap chain so it can't bridge two off-UI taps.
+                if (uiBlocked)
+                    _clickCount = 0;
+                bool didFocus = enableFocus && !uiBlocked && RegisterClick(touch.position);
+
+                // Orbit is blocked by UI and by 3D objects; don't re-arm it if a focus reset just fired.
+                _touchOrbitActive = !didFocus && !uiBlocked
+                    && !(blockWhenOver3DObject && IsPointerOver3DObject(touch.position));
             }
 
             if (touch.phase == TouchPhase.Moved && _touchOrbitActive)
@@ -469,8 +470,9 @@ public class CameraControllerV4 : MonoBehaviour
 
             if (justStarted)
             {
-                // If either finger began over a blocker, ignore this whole pinch sequence.
-                if (IsPointerBlocked(t1.position) || IsPointerBlocked(t2.position))
+                // If either finger began over interactive UI, ignore this whole pinch sequence.
+                // (3D objects never block pinch — zoom/pan pass through.)
+                if (blockWhenOverUI && (PointerIsOverInteractiveUI(t1.position) || PointerIsOverInteractiveUI(t2.position)))
                 {
                     _pinchActive = false;
                 }
@@ -519,7 +521,9 @@ public class CameraControllerV4 : MonoBehaviour
         _lastTouchCount = touchCount;
     }
 
-    void RegisterClick(Vector2 screenPos)
+    // Returns true if this click completed a double-tap and triggered a focus reset.
+    // Callers use that to avoid re-arming an orbit on the same event (TryFocus cancels gestures).
+    bool RegisterClick(Vector2 screenPos)
     {
         float timeSinceLast = Time.time - _lastClickTime;
         bool withinTime = timeSinceLast <= DOUBLE_CLICK_THRESHOLD;
@@ -537,7 +541,9 @@ public class CameraControllerV4 : MonoBehaviour
         {
             TryFocus();
             _clickCount = 0;
+            return true;
         }
+        return false;
     }
 
     void TryFocus()
