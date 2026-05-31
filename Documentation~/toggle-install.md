@@ -13,11 +13,13 @@ version (`LatestIndexByName`). Install is disabled when the list is empty.
 
 `InstallToggleFiles()`:
 - Reads the template text, then **retargets its controller type to the selected one**:
-  `declared = ToolkitCore.GetFieldType(text, "cameraController")`; if it differs from the chosen
-  type, `text = ToolkitCore.RenameIdentifierInCode(text, declared, chosen)` (rewrites the field
-  type + the `FindObjectOfType<…>` token; the class name and comments are untouched). This is what
-  keeps the toggle following a controller upgrade (e.g. V3 → V4) — the field stays strongly typed,
-  no runtime reflection.
+  `declared = ToolkitCore.GetFieldType(text, "cameraController")`; `chosen =
+  ToolkitCore.FullTypeName(selected)` (**namespace-qualified**, so a controller in a namespace still
+  resolves with no added `using`); if they differ,
+  `text = ToolkitCore.RenameIdentifierInCode(text, declared, chosen)` (rewrites the field type + the
+  `FindObjectOfType<…>` token; the class name and comments are untouched). This is what keeps the
+  toggle following a controller upgrade (e.g. V3 → V4) — the field stays strongly typed, no runtime
+  reflection.
 - `ToolkitCore.InstallScriptText(text, scriptDest, null, ToggleClassName)` — same filename=class +
   duplicate-class guards as the controller; on collision the prepared (rewritten) text is carried
   in the shared collision state so **Update existing in place** writes the retargeted source.
@@ -28,8 +30,9 @@ version (`LatestIndexByName`). Install is disabled when the list is empty.
 
 `AddToggleToScene()` (enabled once `ToolkitCore.FindTypeByName(ToggleClassName)` is non-null):
 - Finds/creates a `Canvas` (ScreenSpaceOverlay) and an `EventSystem`.
-- Builds `Toggle2D3DButton` (top-right 80×80, semi-transparent `Image`, `Button`) + child
-  `IconImage` (fills with 10px padding).
+- Builds `Toggle2D3DButton` (top-right, anchor (1,1), pivot (0.5,0.5), anchoredPos (-92,-92), 80×80,
+  semi-transparent `Image`, `Button`) + child `IconImage` (fills with 10px padding, color black —
+  matches the reference; runtime `Start()` only swaps the sprite, not the color).
 - `Undo.AddComponent` the toggle type, then wires via `SerializedObject` (generic — no
   compile-time ref): `button`, `iconImage`, `sprite3D`/`sprite2D` (loaded from the installed
   icons), and `cameraController` = `FindObjectOfType(field type)`.

@@ -11,6 +11,8 @@
 5. Install destination must be `Assets` or under `Assets/`.
 6. Rename via `RenameIdentifierInCode` (code only), never a blind file-wide replace.
 7. Editor-only, generic — no runtime code, no concrete controller class named in source.
+8. Retarget the toggle with the **namespace-qualified** type (`FullTypeName`) so a namespaced
+   controller compiles without an added `using`.
 
 ## Pitfalls
 

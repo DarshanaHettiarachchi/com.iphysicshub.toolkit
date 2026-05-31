@@ -28,9 +28,19 @@ button) and call `ToolkitCore` for install/template/helper logic. UI metrics: `T
 
 ## ToolkitCore
 
-`InstallScriptFile(srcAbs, destFolder, forceDestRel)` → `InstallResult` (success path / message /
-collision). Also `GetTemplatesDir`, `ExtractClassName`, `FindExistingScriptPath`, `PathsEqual`,
-`IsValidIdentifier`, `RenameIdentifierInCode`, `FindTypeByName`, and the toggle name constants.
+**Install** — `InstallScriptText(srcText, destFolder, forceDestRel, classNameFallback)` is the core
+(writes C# into the project, filename = class, Assets-scope + duplicate-class guards, `ImportAsset`);
+`InstallScriptFile(srcAbs, …)` just reads a file and delegates to it. Returns `InstallResult`
+(success path / message / `CollisionPath` + **`CollisionText`** — the prepared source the in-place
+update writes, so a caller's rewrite, e.g. a retargeted toggle, is preserved).
+
+**Templates / source** — `GetTemplatesDir`, `ExtractClassName`, `FindExistingScriptPath`,
+`PathsEqual`, `IsValidIdentifier`, `RenameIdentifierInCode` (whole-word, code-only), `FindTypeByName`,
+toggle name constants.
+
+**Type discovery (shared by both windows)** — `GetProjectControllerTypes(filter, excludeName)`,
+`IsProjectType`, `NiceTypeName`, `FullTypeName` (namespace-qualified, used to retarget the toggle),
+`GetFieldType`, and `VersionOfName` / `LatestIndexByName` (trailing-digit "latest" pick).
 
 ## Lifecycle (CameraUpdaterWindow)
 
