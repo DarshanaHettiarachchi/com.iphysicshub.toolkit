@@ -12,20 +12,32 @@ it never compiles inside the package); the tool copies it into the project on de
 
 Open from `Tools > iPhysicsHub > Camera Toolkit`.
 
-## Install (Git URL)
+## Install
 
-Add to your project's `Packages/manifest.json`:
+It's a Git UPM package — install it either way (both end up the same; the Package Manager UI just
+writes the manifest entry for you). Requires **Git installed and on PATH** (Unity shells out to it).
+
+### Option A — Package Manager (no manual file editing)
+
+1. **Window ▸ Package Manager**.
+2. Click **+** (top-left) ▸ **Add package from git URL…**.
+3. Paste (optionally pin a version with `#v1.3.2`):
+
+   ```
+   https://github.com/DarshanaHettiarachchi/com.iphysicshub.toolkit.git
+   ```
+
+4. **Add**.
+
+### Option B — edit `manifest.json`
+
+Add to your project's `Packages/manifest.json` under `dependencies`:
 
 ```json
-"com.iphysicshub.toolkit": "https://github.com/<user>/<repo>.git"
+"com.iphysicshub.toolkit": "https://github.com/DarshanaHettiarachchi/com.iphysicshub.toolkit.git#v1.3.2"
 ```
 
-Pin a version or point at a subfolder if needed:
-
-```json
-"com.iphysicshub.toolkit": "https://github.com/<user>/<repo>.git#v1.2.0"
-"com.iphysicshub.toolkit": "https://github.com/<user>/<repo>.git?path=/subfolder"
-```
+Drop `#v1.3.2` to track the default branch.
 
 ## Controller upgrade
 
