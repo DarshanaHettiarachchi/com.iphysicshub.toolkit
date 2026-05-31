@@ -1,0 +1,4 @@
+# OS cruft only — the package payload (Templates~/, *.meta) must stay tracked.
+.DS_Store
+Thumbs.db
+desktop.ini

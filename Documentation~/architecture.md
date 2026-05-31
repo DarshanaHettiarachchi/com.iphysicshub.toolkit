@@ -1,0 +1,40 @@
+# Architecture
+
+[← AGENTS.md](../AGENTS.md)
+
+## Files
+
+```text
+Editor/ToolkitCore.cs            shared statics (install, templates, helpers) + ToolkitWindowBase
+Editor/CameraUpdaterWindow.cs    controller install/capture + upgrade
+Editor/Toggle2D3DWindow.cs       2D/3D toggle install + build/wire
+Editor/...Editor.asmdef          Editor-only; references UnityEngine.UI (toggle build)
+Templates~/                      installable payload: controller .cs, Camera2DToggleUI.cs, Icons/
+Documentation~/                  these docs (hidden from Unity)
+package.json / README.md / CHANGELOG.md
+```
+
+## Windows (two separate tools)
+
+- **`CameraUpdaterWindow`** — `Tools > iPhysicsHub > Camera Updater`. Installs/captures the
+  controller source and upgrades a controller component. Its template list excludes
+  `ToolkitCore.ToggleScriptName`.
+- **`Toggle2D3DWindow`** — `Tools > iPhysicsHub > 2D-3D Toggle`. Installs the toggle files, then
+  builds a wired button in the scene.
+
+Both derive from `ToolkitWindowBase` (shared status line + duplicate-class "update in place"
+button) and call `ToolkitCore` for install/template/helper logic. UI metrics: `ToolkitCore.ButtonH`,
+`ToolkitCore.LabelW`.
+
+## ToolkitCore
+
+`InstallScriptFile(srcAbs, destFolder, forceDestRel)` → `InstallResult` (success path / message /
+collision). Also `GetTemplatesDir`, `ExtractClassName`, `FindExistingScriptPath`, `PathsEqual`,
+`IsValidIdentifier`, `RenameIdentifierInCode`, `FindTypeByName`, and the toggle name constants.
+
+## Lifecycle (CameraUpdaterWindow)
+
+- `OnEnable()` — seed `_target` from selection, then `RefreshTargets/NewTypes/OldCandidates/Templates`.
+- `OnSelectionChange()` — follow hierarchy selection → `_target`, re-refresh, repaint.
+- `OnGUI()` — reads cached lists each frame; change-checks on Filter / target / template popups
+  trigger the matching `Refresh*`.
