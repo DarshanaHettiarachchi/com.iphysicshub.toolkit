@@ -1,6 +1,6 @@
 {
   "name": "com.iphysicshub.toolkit",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "displayName": "iPhysicsHub Toolkit",
   "description": "Editor toolkit that syncs the latest camera tooling into a project from a central package: install/capture a camera controller, upgrade an old controller component to a new one (copying matching inspector values), and install a wired 2D/3D toggle button. Class names need not match between projects.",
   "unity": "2022.3",

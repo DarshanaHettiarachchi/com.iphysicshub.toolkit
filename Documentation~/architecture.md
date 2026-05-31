@@ -8,8 +8,9 @@
 Editor/ToolkitCore.cs            shared statics (install, templates, helpers) + ToolkitWindowBase
 Editor/CameraUpdaterWindow.cs    controller install/capture + upgrade
 Editor/Toggle2D3DWindow.cs       2D/3D toggle install + build/wire
+Editor/UIEnhancerWindow.cs       UI Hit Area Visualizer install + add to Canvas
 Editor/...Editor.asmdef          Editor-only; references UnityEngine.UI (toggle build)
-Templates~/                      installable payload: controller .cs, Camera2DToggleUI.cs, Icons/
+Templates~/                      installable payload: controller .cs, Camera2DToggleUI.cs, UIHitAreaVisualizer.cs, Icons/
 Documentation~/                  these docs (hidden from Unity)
 package.json / README.md / CHANGELOG.md
 ```
@@ -18,9 +19,11 @@ package.json / README.md / CHANGELOG.md
 
 - **`CameraUpdaterWindow`** — `Tools > iPhysicsHub > Camera Updater`. Installs/captures the
   controller source and upgrades a controller component. Its template list excludes
-  `ToolkitCore.ToggleScriptName`.
+  `ToolkitCore.ToggleScriptName` and `ToolkitCore.VisualizerScriptName`.
 - **`Toggle2D3DWindow`** — `Tools > iPhysicsHub > 2D-3D Toggle`. Installs the toggle files, then
   builds a wired button in the scene.
+- **`UIEnhancerWindow`** — `Tools > iPhysicsHub > UI Enhancer`. Installs the UI Hit Area
+  Visualizer script, then adds it to the scene's Canvas.
 
 Both derive from `ToolkitWindowBase` (shared status line + duplicate-class "update in place"
 button) and call `ToolkitCore` for install/template/helper logic. UI metrics: `ToolkitCore.ButtonH`,

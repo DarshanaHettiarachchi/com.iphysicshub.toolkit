@@ -39,6 +39,8 @@ namespace IPhysicsHub.Toolkit.Editor
         // Toggle payload identifiers (shared so the controller list can exclude it).
         public const string ToggleScriptName = "Camera2DToggleUI.cs";
         public const string ToggleClassName = "Camera2DToggleUI";
+        public const string VisualizerScriptName = "UIHitAreaVisualizer.cs";
+        public const string VisualizerClassName = "UIHitAreaVisualizer";
 
         // Absolute path to the package's hidden Templates~ folder (resolved via Package Manager).
         public static string GetTemplatesDir()

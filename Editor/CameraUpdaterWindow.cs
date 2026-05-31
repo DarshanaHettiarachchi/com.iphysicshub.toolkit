@@ -273,6 +273,7 @@ namespace IPhysicsHub.Toolkit.Editor
                 // Controller templates only — exclude the 2D/3D toggle script (its own window installs it).
                 _templatePaths = Directory.GetFiles(dir, "*.cs", SearchOption.AllDirectories)
                     .Where(p => Path.GetFileName(p) != ToolkitCore.ToggleScriptName)
+                    .Where(p => Path.GetFileName(p) != ToolkitCore.VisualizerScriptName)
                     .ToArray();
                 _templateNames = _templatePaths.Select(Path.GetFileName).ToArray();
             }
