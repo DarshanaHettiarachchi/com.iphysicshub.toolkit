@@ -268,7 +268,7 @@ public class CameraControllerV5 : MonoBehaviour
         while (t != null)
         {
             // Block on any UI panel explicitly tagged as a blocker
-            if (t.CompareTag("UIBlocker"))
+            if (t.tag == "UIBlocker")
                 return true;
 
             // Only block on enabled, interactable Selectables — a disabled Button shouldn't eat input.
