@@ -49,6 +49,22 @@ namespace IPhysicsHub.Toolkit.Editor
             return pkg == null ? null : Path.Combine(pkg.resolvedPath, "Templates~");
         }
 
+        // Soft gate, not real security.
+        public const string MaintainerPassword = "dnhnuwan";
+
+        public static bool CheckMaintainerPassword(string input, out string message, out MessageType messageType)
+        {
+            if (input == MaintainerPassword)
+            {
+                message = "Maintainer unlocked.";
+                messageType = MessageType.Info;
+                return true;
+            }
+            message = "Incorrect password.";
+            messageType = MessageType.Error;
+            return false;
+        }
+
         // Reads a .cs file and installs its text (see InstallScriptText). forceDestRel overwrites
         // that exact path; otherwise installs into destFolder.
         public static InstallResult InstallScriptFile(string srcAbsPath, string destFolder, string forceDestRel)

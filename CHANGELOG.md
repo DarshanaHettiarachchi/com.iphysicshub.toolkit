@@ -2,6 +2,19 @@
 
 All notable changes to this package are documented here.
 
+## [1.5.0]
+
+### Added
+- **Project Settings Sync** window (`Tools > iPhysicsHub > Project Settings Sync`).
+  - Capture current project settings (Player, Quality, Graphics, Lighting, Build) into a portable `ProjectSettingsProfile` asset.
+  - Apply a profile back to the project (or a package-shipped JSON preset) with auto-backup, confirmation dialog, and per-category error isolation.
+  - Ships curated **WebGL preset** in `Templates~/webgl.json`.
+  - Maintainer save: write the working profile back to `Templates~` as a JSON preset (shared password gate).
+- Shared maintainer password gate moved to `ToolkitCore` and reused by both `CameraUpdaterWindow` and `ProjectSettingsSyncWindow`.
+
+### Changed
+- `CameraUpdaterWindow` now uses the shared `ToolkitCore.CheckMaintainerPassword` helper.
+
 ## [1.3.2]
 
 ### Fixed

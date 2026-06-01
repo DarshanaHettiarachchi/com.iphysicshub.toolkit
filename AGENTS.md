@@ -2,15 +2,17 @@
 
 Reference for working **on** this package. End-user usage: [`README.md`](README.md).
 
-Editor-only, three separate windows under `Tools > iPhysicsHub`:
+Editor-only, four separate windows under `Tools > iPhysicsHub`:
 - **Camera Updater** — install/capture the controller source; upgrade a controller component.
 - **2D-3D Toggle** — install the toggle files; build a wired toggle button in the scene.
 - **UI Enhancer** — install the UI Hit Area Visualizer script; add it to the scene's Canvas.
+- **Project Settings Sync** — capture current project settings into a profile asset; apply curated WebGL presets or the working profile to the project.
 
 Logic split: shared statics + window base in [`Editor/ToolkitCore.cs`](Editor/ToolkitCore.cs);
-[`Editor/CameraUpdaterWindow.cs`](Editor/CameraUpdaterWindow.cs) and
-[`Editor/Toggle2D3DWindow.cs`](Editor/Toggle2D3DWindow.cs). `Templates~/` holds the installable
-payload (controller `.cs`, the toggle script, `Icons/`) — payload, not documented here.
+[`Editor/CameraUpdaterWindow.cs`](Editor/CameraUpdaterWindow.cs),
+[`Editor/Toggle2D3DWindow.cs`](Editor/Toggle2D3DWindow.cs), and
+[`Editor/ProjectSettingsSyncWindow.cs`](Editor/ProjectSettingsSyncWindow.cs).
+`Templates~/` holds the installable payload (controller `.cs`, the toggle script, `Icons/`, JSON project-setting presets) — payload, not documented here.
 
 ## Docs
 

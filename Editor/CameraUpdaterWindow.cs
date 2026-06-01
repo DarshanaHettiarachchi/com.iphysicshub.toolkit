@@ -46,7 +46,6 @@ namespace IPhysicsHub.Toolkit.Editor
         private bool _showMaintainer;
         private bool _maintainerUnlocked;            // session-only gate for capture
         private string _maintainerPwd = "";
-        private const string MaintainerPassword = "dnhnuwan"; // soft gate, not real security
 
         [MenuItem("Tools/iPhysicsHub/Camera Updater")]
         private static void Open()
@@ -198,16 +197,16 @@ namespace IPhysicsHub.Toolkit.Editor
                     _maintainerPwd = EditorGUILayout.PasswordField("Password", _maintainerPwd);
                     if (GUILayout.Button("Enable", GUILayout.Width(90), GUILayout.Height(ToolkitCore.ButtonH)))
                     {
-                        if (_maintainerPwd == MaintainerPassword)
+                        if (ToolkitCore.CheckMaintainerPassword(_maintainerPwd, out string msg, out MessageType type))
                         {
                             _maintainerUnlocked = true;
-                            _message = "Maintainer unlocked.";
-                            _messageType = MessageType.Info;
+                            _message = msg;
+                            _messageType = type;
                         }
                         else
                         {
-                            _message = "Incorrect password.";
-                            _messageType = MessageType.Error;
+                            _message = msg;
+                            _messageType = type;
                         }
                         _maintainerPwd = "";
                         GUI.FocusControl(null);

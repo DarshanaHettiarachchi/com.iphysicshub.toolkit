@@ -9,13 +9,14 @@ Editor/ToolkitCore.cs            shared statics (install, templates, helpers) + 
 Editor/CameraUpdaterWindow.cs    controller install/capture + upgrade
 Editor/Toggle2D3DWindow.cs       2D/3D toggle install + build/wire
 Editor/UIEnhancerWindow.cs       UI Hit Area Visualizer install + add to Canvas
+Editor/ProjectSettingsSyncWindow.cs    capture/apply project settings + preset manager
 Editor/...Editor.asmdef          Editor-only; references UnityEngine.UI (toggle build)
-Templates~/                      installable payload: controller .cs, Camera2DToggleUI.cs, UIHitAreaVisualizer.cs, Icons/
+Templates~/                      installable payload: controller .cs, Camera2DToggleUI.cs, UIHitAreaVisualizer.cs, Icons/, JSON project-setting presets
 Documentation~/                  these docs (hidden from Unity)
 package.json / README.md / CHANGELOG.md
 ```
 
-## Windows (two separate tools)
+## Windows (four separate tools)
 
 - **`CameraUpdaterWindow`** — `Tools > iPhysicsHub > Camera Updater`. Installs/captures the
   controller source and upgrades a controller component. Its template list excludes
@@ -24,8 +25,11 @@ package.json / README.md / CHANGELOG.md
   builds a wired button in the scene.
 - **`UIEnhancerWindow`** — `Tools > iPhysicsHub > UI Enhancer`. Installs the UI Hit Area
   Visualizer script, then adds it to the scene's Canvas.
+- **`ProjectSettingsSyncWindow`** — `Tools > iPhysicsHub > Project Settings Sync`. Captures
+  current project settings into a profile asset, applies a profile or a package-shipped JSON preset
+  to the project, and lets maintainers save presets back to `Templates~`.
 
-Both derive from `ToolkitWindowBase` (shared status line + duplicate-class "update in place"
+All derive from `ToolkitWindowBase` (shared status line + duplicate-class "update in place"
 button) and call `ToolkitCore` for install/template/helper logic. UI metrics: `ToolkitCore.ButtonH`,
 `ToolkitCore.LabelW`.
 
