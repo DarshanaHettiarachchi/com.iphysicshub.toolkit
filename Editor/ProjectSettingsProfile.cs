@@ -68,6 +68,7 @@ namespace IPhysicsHub.Toolkit.Editor
         public bool realtimeReflectionProbes;
         public int skinWeights;
         public string renderPipelineAssetPath;
+        public string[] excludedTargetPlatforms;
     }
 
     [Serializable]

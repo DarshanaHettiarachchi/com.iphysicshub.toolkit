@@ -370,9 +370,29 @@ namespace IPhysicsHub.Toolkit.Editor
                         else
                             level.renderPipelineAssetPath = "";
 
-                        levels.Add(level);
+                        p = levelProp.FindPropertyRelative("excludedTargetPlatforms");
+                        if (p != null && p.isArray)
+                        {
+                            int epCount = p.arraySize;
+                            var epList = new List<string>();
+                            for (int j = 0; j < epCount; j++)
+                            {
+                                var epElem = p.GetArrayElementAtIndex(j);
+                                if (epElem != null) epList.Add(epElem.stringValue);
+                            }
+                            level.excludedTargetPlatforms = epList.ToArray();
+                        }
+                        else
+                        {
+                            level.excludedTargetPlatforms = Array.Empty<string>();
+                        }
+
+                        if (level.name == "Mobile Webgl")
+                            levels.Add(level);
                     }
                     data.levels = levels.ToArray();
+                    if (data.levels.Length == 1)
+                        data.webglDefaultLevel = 0;
                 }
             }
 
@@ -643,15 +663,30 @@ namespace IPhysicsHub.Toolkit.Editor
             if (levelsProp == null) return;
             if (data.levels.Length == 0) return;
 
-            // Resize so the project ends up with exactly the profile's levels (extra entries are
-            // cloned from the last existing level, then overwritten field-by-field below). This
-            // lets a preset add/remove levels instead of only overwriting by index.
-            levelsProp.arraySize = data.levels.Length;
-
             for (int i = 0; i < data.levels.Length; i++)
             {
                 var level = data.levels[i];
-                var levelProp = levelsProp.GetArrayElementAtIndex(i);
+                int projectIndex = -1;
+
+                // Find existing level by name in the project
+                for (int j = 0; j < levelsProp.arraySize; j++)
+                {
+                    var nameProp = levelsProp.GetArrayElementAtIndex(j).FindPropertyRelative("name");
+                    if (nameProp != null && nameProp.stringValue == level.name)
+                    {
+                        projectIndex = j;
+                        break;
+                    }
+                }
+
+                // Not found → append
+                if (projectIndex < 0)
+                {
+                    levelsProp.arraySize++;
+                    projectIndex = levelsProp.arraySize - 1;
+                }
+
+                var levelProp = levelsProp.GetArrayElementAtIndex(projectIndex);
 
                 var p = levelProp.FindPropertyRelative("name");
                 if (p != null) p.stringValue = level.name;
@@ -699,18 +734,42 @@ namespace IPhysicsHub.Toolkit.Editor
                     if (rpAsset != null)
                         p.objectReferenceValue = rpAsset;
                     else
-                        Debug.LogWarning($"[ProjectSettingsSync] Quality level {i} render pipeline asset missing: {level.renderPipelineAssetPath}");
+                        Debug.LogWarning($"[ProjectSettingsSync] Quality level {projectIndex} render pipeline asset missing: {level.renderPipelineAssetPath}");
+                }
+
+                p = levelProp.FindPropertyRelative("excludedTargetPlatforms");
+                if (p != null && p.isArray)
+                {
+                    int epCount = level.excludedTargetPlatforms != null ? level.excludedTargetPlatforms.Length : 0;
+                    p.arraySize = epCount;
+                    for (int j = 0; j < epCount; j++)
+                    {
+                        var epElem = p.GetArrayElementAtIndex(j);
+                        if (epElem != null) epElem.stringValue = level.excludedTargetPlatforms[j];
+                    }
                 }
             }
 
             // Pin the WebGL per-platform default (the green-checkmark level), not just the editor's
             // current level, so the choice survives editor restarts and builds.
+            // Dynamically resolve "Mobile Webgl" by scanning the project array.
+            int targetDefault = data.webglDefaultLevel;
+            for (int i = 0; i < levelsProp.arraySize; i++)
+            {
+                var nameProp = levelsProp.GetArrayElementAtIndex(i).FindPropertyRelative("name");
+                if (nameProp != null && nameProp.stringValue == "Mobile Webgl")
+                {
+                    targetDefault = i;
+                    break;
+                }
+            }
+
             var webglDefault = FindPerPlatformQualityProp(so, "WebGL");
-            if (webglDefault != null) webglDefault.intValue = data.webglDefaultLevel;
+            if (webglDefault != null) webglDefault.intValue = targetDefault;
 
             so.ApplyModifiedProperties();
 
-            try { QualitySettings.SetQualityLevel(data.webglDefaultLevel); } catch { }
+            try { QualitySettings.SetQualityLevel(targetDefault); } catch { }
         }
 
         private void ApplyGraphics(GraphicsSettingsData data)
@@ -811,11 +870,18 @@ namespace IPhysicsHub.Toolkit.Editor
 
             if (!string.IsNullOrEmpty(data.skyboxMaterialPath))
             {
-                var skybox = AssetDatabase.LoadAssetAtPath<Material>(data.skyboxMaterialPath);
-                if (skybox != null)
-                    RenderSettings.skybox = skybox;
+                if (data.skyboxMaterialPath == "Resources/unity_builtin_extra")
+                {
+                    // Do NOT overwrite the scene skybox with the built-in default
+                }
                 else
-                    Debug.LogWarning($"[ProjectSettingsSync] Skybox material missing: {data.skyboxMaterialPath}");
+                {
+                    var skybox = AssetDatabase.LoadAssetAtPath<Material>(data.skyboxMaterialPath);
+                    if (skybox != null)
+                        RenderSettings.skybox = skybox;
+                    else
+                        Debug.LogWarning($"[ProjectSettingsSync] Skybox material missing: {data.skyboxMaterialPath}");
+                }
             }
 
             try { RenderSettings.ambientMode = (AmbientMode)data.ambientMode; } catch { }
