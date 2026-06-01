@@ -96,27 +96,9 @@ namespace IPhysicsHub.Toolkit.Editor
     [Serializable]
     public class LightingEnvironmentData
     {
-        public string skyboxMaterialPath;
-        public int ambientMode;
-        public Color ambientSkyColor;
-        public Color ambientEquatorColor;
-        public Color ambientGroundColor;
-        public Color ambientLight;        // flat Ambient Color (Source = Color)
-        public float ambientIntensity;
-        public bool fog;
-        public Color fogColor;
-        public int fogMode;
-        public float fogDensity;
-        public float fogStart;
-        public float fogEnd;
-        public int defaultReflectionMode;
-        public int defaultReflectionResolution;
-        public int reflectionCompression;     // Environment Reflections > Compression
-        public int reflectionBounces;
-        public float reflectionIntensity;
-        public Color subtractiveShadowColor;  // Realtime Shadow Color
-        public float haloStrength;
-        public float flareStrength;
+        public int ambientMode;               // Environment Lighting > Source
+        public int defaultReflectionMode;      // Environment Reflections > Source
+        public int defaultReflectionResolution; // Environment Reflections > Resolution
     }
 
     [Serializable]

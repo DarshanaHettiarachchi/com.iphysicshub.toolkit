@@ -462,31 +462,9 @@ namespace IPhysicsHub.Toolkit.Editor
         {
             var data = new LightingEnvironmentData();
 
-            if (RenderSettings.skybox != null)
-                data.skyboxMaterialPath = AssetDatabase.GetAssetPath(RenderSettings.skybox);
-            else
-                data.skyboxMaterialPath = "";
-
             data.ambientMode = (int)RenderSettings.ambientMode;
-            data.ambientSkyColor = RenderSettings.ambientSkyColor;
-            data.ambientEquatorColor = RenderSettings.ambientEquatorColor;
-            data.ambientGroundColor = RenderSettings.ambientGroundColor;
-            data.ambientLight = RenderSettings.ambientLight;
-            data.ambientIntensity = RenderSettings.ambientIntensity;
-            data.fog = RenderSettings.fog;
-            data.fogColor = RenderSettings.fogColor;
-            data.fogMode = (int)RenderSettings.fogMode;
-            data.fogDensity = RenderSettings.fogDensity;
-            data.fogStart = RenderSettings.fogStartDistance;
-            data.fogEnd = RenderSettings.fogEndDistance;
             data.defaultReflectionMode = (int)RenderSettings.defaultReflectionMode;
             data.defaultReflectionResolution = RenderSettings.defaultReflectionResolution;
-            data.reflectionCompression = (int)LightmapEditorSettings.reflectionCubemapCompression;
-            data.reflectionBounces = RenderSettings.reflectionBounces;
-            data.reflectionIntensity = RenderSettings.reflectionIntensity;
-            data.subtractiveShadowColor = RenderSettings.subtractiveShadowColor;
-            data.haloStrength = RenderSettings.haloStrength;
-            data.flareStrength = RenderSettings.flareStrength;
 
             profile.lighting = data;
         }
@@ -868,42 +846,9 @@ namespace IPhysicsHub.Toolkit.Editor
         {
             if (data == null) return;
 
-            if (!string.IsNullOrEmpty(data.skyboxMaterialPath))
-            {
-                if (data.skyboxMaterialPath == "Resources/unity_builtin_extra")
-                {
-                    // Do NOT overwrite the scene skybox with the built-in default
-                }
-                else
-                {
-                    var skybox = AssetDatabase.LoadAssetAtPath<Material>(data.skyboxMaterialPath);
-                    if (skybox != null)
-                        RenderSettings.skybox = skybox;
-                    else
-                        Debug.LogWarning($"[ProjectSettingsSync] Skybox material missing: {data.skyboxMaterialPath}");
-                }
-            }
-
             try { RenderSettings.ambientMode = (AmbientMode)data.ambientMode; } catch { }
-            RenderSettings.ambientSkyColor = data.ambientSkyColor;
-            RenderSettings.ambientEquatorColor = data.ambientEquatorColor;
-            RenderSettings.ambientGroundColor = data.ambientGroundColor;
-            RenderSettings.ambientLight = data.ambientLight;
-            RenderSettings.ambientIntensity = data.ambientIntensity;
-            RenderSettings.fog = data.fog;
-            RenderSettings.fogColor = data.fogColor;
-            try { RenderSettings.fogMode = (FogMode)data.fogMode; } catch { }
-            RenderSettings.fogDensity = data.fogDensity;
-            RenderSettings.fogStartDistance = data.fogStart;
-            RenderSettings.fogEndDistance = data.fogEnd;
             try { RenderSettings.defaultReflectionMode = (DefaultReflectionMode)data.defaultReflectionMode; } catch { }
             RenderSettings.defaultReflectionResolution = data.defaultReflectionResolution;
-            try { LightmapEditorSettings.reflectionCubemapCompression = (ReflectionCubemapCompression)data.reflectionCompression; } catch { }
-            RenderSettings.reflectionBounces = data.reflectionBounces;
-            RenderSettings.reflectionIntensity = data.reflectionIntensity;
-            RenderSettings.subtractiveShadowColor = data.subtractiveShadowColor;
-            RenderSettings.haloStrength = data.haloStrength;
-            RenderSettings.flareStrength = data.flareStrength;
 
             for (int i = 0; i < EditorSceneManager.sceneCount; i++)
             {
