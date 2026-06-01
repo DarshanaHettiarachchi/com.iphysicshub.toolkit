@@ -23,7 +23,7 @@ namespace IPhysicsHub.Toolkit.Editor
         private static void Open()
         {
             var w = GetWindow<UIEnhancerWindow>("UI Enhancer");
-            w.minSize = new Vector2(380, 340);
+            w.minSize = new Vector2(380, 420);
             w.Show();
         }
 
@@ -63,6 +63,20 @@ namespace IPhysicsHub.Toolkit.Editor
             {
                 if (GUILayout.Button($"Apply {DefaultPadding} Raycast Padding to Canvas", GUILayout.Height(ToolkitCore.ButtonH)))
                     ApplyRaycastPadding();
+            }
+            if (!hasCanvas)
+                EditorGUILayout.LabelField("No Canvas in the scene.", EditorStyles.miniLabel);
+
+            EditorGUILayout.Space(8);
+            EditorGUILayout.LabelField("Canvas Scaler", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Set the first Canvas to Scale With Screen Size, reference 1920×1080, match 0.5.",
+                MessageType.None);
+
+            using (new EditorGUI.DisabledScope(!hasCanvas))
+            {
+                if (GUILayout.Button("Set Canvas Scaler Defaults", GUILayout.Height(ToolkitCore.ButtonH)))
+                    ApplyCanvasScalerDefaults();
             }
             if (!hasCanvas)
                 EditorGUILayout.LabelField("No Canvas in the scene.", EditorStyles.miniLabel);
@@ -125,6 +139,14 @@ namespace IPhysicsHub.Toolkit.Editor
                 canvasGo = new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
                 canvasGo.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
                 Undo.RegisterCreatedObjectUndo(canvasGo, "Create Canvas");
+
+                // Apply scaler defaults automatically on newly created Canvas
+                CanvasScaler newScaler = canvasGo.GetComponent<CanvasScaler>();
+                newScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                newScaler.referenceResolution = new Vector2(1920f, 1080f);
+                newScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+                newScaler.matchWidthOrHeight = 0.5f;
+                newScaler.referencePixelsPerUnit = 100f;
             }
             else
             {
@@ -154,6 +176,34 @@ namespace IPhysicsHub.Toolkit.Editor
             Selection.activeGameObject = canvasGo;
 
             _message = "Added UIHitAreaVisualizer to " + canvasGo.name + ". Press Play and hit F12 to toggle debug overlays.";
+            _messageType = MessageType.Info;
+        }
+
+        private void ApplyCanvasScalerDefaults()
+        {
+            Canvas canvas = FindObjectOfType<Canvas>();
+            if (canvas == null)
+            { _message = "No Canvas found in the scene."; _messageType = MessageType.Warning; return; }
+
+            Undo.RecordObject(canvas.gameObject, "Set Canvas Scaler Defaults");
+
+            CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
+            if (scaler == null)
+                scaler = Undo.AddComponent<CanvasScaler>(canvas.gameObject);
+            else
+                Undo.RecordObject(scaler, "Set Canvas Scaler Defaults");
+
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            scaler.matchWidthOrHeight = 0.5f;
+            scaler.referencePixelsPerUnit = 100f;
+
+            EditorUtility.SetDirty(scaler);
+            if (canvas.gameObject.scene.IsValid())
+                EditorSceneManager.MarkSceneDirty(canvas.gameObject.scene);
+
+            _message = "Applied Canvas Scaler defaults to " + canvas.name + ".";
             _messageType = MessageType.Info;
         }
 
