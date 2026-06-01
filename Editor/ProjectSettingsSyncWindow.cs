@@ -19,7 +19,6 @@ namespace IPhysicsHub.Toolkit.Editor
         private string _maintainerPwd = "";
         private string _savePresetName = "webgl";
 
-        private bool _useWorkingProfile = true;
         private bool _applyPlayer = true, _applyQuality = true, _applyGraphics = true, _applyLighting = true, _applyBuild = true;
         private string[] _presetNames = Array.Empty<string>();
         private string[] _presetPaths = Array.Empty<string>();
@@ -33,7 +32,12 @@ namespace IPhysicsHub.Toolkit.Editor
             w.Show();
         }
 
-        private void OnEnable() => RefreshPresets();
+        private void OnEnable()
+        {
+            _collisionPath = null;
+            _collisionText = null;
+            RefreshPresets();
+        }
 
         private void OnGUI()
         {
@@ -41,50 +45,17 @@ namespace IPhysicsHub.Toolkit.Editor
 
             EditorGUILayout.LabelField("Project Settings Sync", EditorStyles.boldLabel);
 
-            // Working profile
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                _workingProfile = (ProjectSettingsProfile)EditorGUILayout.ObjectField(
-                    "Working profile", _workingProfile, typeof(ProjectSettingsProfile), false);
-                if (GUILayout.Button("Create New", GUILayout.Width(90), GUILayout.Height(ToolkitCore.ButtonH)))
-                    CreateNewProfile();
-            }
-
-            EditorGUILayout.Space(4);
-
-            // Capture
-            _showCapture = EditorGUILayout.Foldout(_showCapture, "Capture from Current Project", true);
-            if (_showCapture)
-            {
-                EditorGUI.indentLevel++;
-                using (new EditorGUI.DisabledScope(_workingProfile == null))
-                {
-                    if (GUILayout.Button("Capture Settings", GUILayout.Height(ToolkitCore.ButtonH)))
-                        CaptureSettings();
-                }
-                if (_workingProfile == null)
-                    EditorGUILayout.LabelField("Create or assign a working profile first.", EditorStyles.miniLabel);
-                EditorGUI.indentLevel--;
-            }
-
-            EditorGUILayout.Space(4);
-
             // Apply
             _showApply = EditorGUILayout.Foldout(_showApply, "Apply to Current Project", true);
             if (_showApply)
             {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.LabelField("Source:", EditorStyles.boldLabel);
-                _useWorkingProfile = EditorGUILayout.ToggleLeft("Working profile", _useWorkingProfile);
-                using (new EditorGUI.DisabledScope(_useWorkingProfile))
+                using (new EditorGUILayout.HorizontalScope())
                 {
-                    using (new EditorGUILayout.HorizontalScope())
-                    {
-                        EditorGUILayout.LabelField("Package preset:", GUILayout.Width(120));
-                        _presetIndex = EditorGUILayout.Popup(_presetIndex, _presetNames);
-                        if (GUILayout.Button("↻", GUILayout.Width(26), GUILayout.Height(ToolkitCore.ButtonH)))
-                            RefreshPresets();
-                    }
+                    EditorGUILayout.LabelField("Package preset:", GUILayout.Width(120));
+                    _presetIndex = EditorGUILayout.Popup(_presetIndex, _presetNames);
+                    if (GUILayout.Button("↻", GUILayout.Width(26), GUILayout.Height(ToolkitCore.ButtonH)))
+                        RefreshPresets();
                 }
 
                 EditorGUILayout.Space(2);
@@ -138,6 +109,29 @@ namespace IPhysicsHub.Toolkit.Editor
                 }
                 else
                 {
+                    // Working profile
+                    using (new EditorGUILayout.HorizontalScope())
+                    {
+                        _workingProfile = (ProjectSettingsProfile)EditorGUILayout.ObjectField(
+                            "Working profile", _workingProfile, typeof(ProjectSettingsProfile), false);
+                        if (GUILayout.Button("Create New", GUILayout.Width(90), GUILayout.Height(ToolkitCore.ButtonH)))
+                            CreateNewProfile();
+                    }
+
+                    EditorGUILayout.Space(4);
+
+                    // Capture
+                    EditorGUILayout.LabelField("Capture from Current Project", EditorStyles.boldLabel);
+                    using (new EditorGUI.DisabledScope(_workingProfile == null))
+                    {
+                        if (GUILayout.Button("Capture Settings", GUILayout.Height(ToolkitCore.ButtonH)))
+                            CaptureSettings();
+                    }
+                    if (_workingProfile == null)
+                        EditorGUILayout.LabelField("Create or assign a working profile first.", EditorStyles.miniLabel);
+
+                    EditorGUILayout.Space(4);
+                    EditorGUILayout.LabelField("Save preset to package", EditorStyles.boldLabel);
                     _savePresetName = EditorGUILayout.TextField("Save as", _savePresetName);
                     using (new EditorGUI.DisabledScope(_workingProfile == null))
                     {
@@ -154,11 +148,7 @@ namespace IPhysicsHub.Toolkit.Editor
             DrawStatus();
         }
 
-        private bool CanApply()
-        {
-            if (_useWorkingProfile) return _workingProfile != null;
-            return _presetPaths.Length > 0;
-        }
+        private bool CanApply() => _presetPaths.Length > 0;
 
         private void CreateNewProfile()
         {
@@ -506,10 +496,10 @@ namespace IPhysicsHub.Toolkit.Editor
 
         private void ApplySettings()
         {
-            ProjectSettingsProfile source = _useWorkingProfile ? _workingProfile : LoadPresetProfile();
+            ProjectSettingsProfile source = LoadPresetProfile();
             if (source == null)
             {
-                _message = "No source profile selected.";
+                _message = "No preset selected.";
                 _messageType = MessageType.Warning;
                 return;
             }
@@ -535,6 +525,7 @@ namespace IPhysicsHub.Toolkit.Editor
                 Debug.LogError($"[ProjectSettingsSync] Backup failed: {e.Message}");
             }
 
+            Debug.Log($"[ProjectSettingsSync] Applying — Graphics:{_applyGraphics} Quality:{_applyQuality} Build:{_applyBuild} Lighting:{_applyLighting} Player:{_applyPlayer} | Source:{(source != null ? "present" : "null")}");
             AssetDatabase.StartAssetEditing();
             try
             {
@@ -548,7 +539,7 @@ namespace IPhysicsHub.Toolkit.Editor
             {
                 AssetDatabase.StopAssetEditing();
                 // The preset branch builds a throwaway instance; the working profile is a real asset.
-                if (!_useWorkingProfile && source != null) DestroyImmediate(source);
+                if (source != null) DestroyImmediate(source);
             }
 
             AssetDatabase.SaveAssets();
@@ -634,12 +625,26 @@ namespace IPhysicsHub.Toolkit.Editor
             if (data == null || data.levels == null) return;
 
             var qualityAsset = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/QualitySettings.asset");
-            if (qualityAsset == null || qualityAsset.Length == 0) return;
+            if (qualityAsset == null || qualityAsset.Length == 0)
+            {
+                Debug.LogError("[ProjectSettingsSync] QualitySettings.asset not found.");
+                return;
+            }
 
             var so = new SerializedObject(qualityAsset[0]);
             var levelsProp = so.FindProperty("m_QualitySettings");
-            if (levelsProp == null) return;
-            if (data.levels.Length == 0) return;
+            if (levelsProp == null)
+            {
+                Debug.LogError("[ProjectSettingsSync] m_QualitySettings property not found.");
+                return;
+            }
+            if (data.levels == null || data.levels.Length == 0)
+            {
+                Debug.LogWarning("[ProjectSettingsSync] No quality levels in preset.");
+                return;
+            }
+
+            Debug.Log($"[ProjectSettingsSync] ApplyQuality: project has {levelsProp.arraySize} levels, preset has {data.levels.Length} levels.");
 
             for (int i = 0; i < data.levels.Length; i++)
             {
@@ -662,6 +667,11 @@ namespace IPhysicsHub.Toolkit.Editor
                 {
                     levelsProp.arraySize++;
                     projectIndex = levelsProp.arraySize - 1;
+                    Debug.Log($"[ProjectSettingsSync] Appended '{level.name}' at index {projectIndex}. New array size: {levelsProp.arraySize}");
+                }
+                else
+                {
+                    Debug.Log($"[ProjectSettingsSync] Updating existing '{level.name}' at index {projectIndex}.");
                 }
 
                 var levelProp = levelsProp.GetArrayElementAtIndex(projectIndex);
@@ -743,11 +753,20 @@ namespace IPhysicsHub.Toolkit.Editor
             }
 
             var webglDefault = FindPerPlatformQualityProp(so, "WebGL");
-            if (webglDefault != null) webglDefault.intValue = targetDefault;
+            if (webglDefault != null)
+            {
+                webglDefault.intValue = targetDefault;
+                Debug.Log($"[ProjectSettingsSync] WebGL default quality set to index {targetDefault}.");
+            }
+            else
+            {
+                Debug.LogWarning("[ProjectSettingsSync] Could not find WebGL per-platform quality property.");
+            }
 
             so.ApplyModifiedProperties();
+            Debug.Log("[ProjectSettingsSync] ApplyModifiedProperties called for QualitySettings.");
 
-            try { QualitySettings.SetQualityLevel(targetDefault); } catch { }
+            try { QualitySettings.SetQualityLevel(targetDefault); Debug.Log($"[ProjectSettingsSync] QualitySettings.SetQualityLevel({targetDefault}) succeeded."); } catch (Exception e) { Debug.LogWarning($"[ProjectSettingsSync] SetQualityLevel failed: {e.Message}"); }
         }
 
         private void ApplyGraphics(GraphicsSettingsData data)
@@ -844,11 +863,18 @@ namespace IPhysicsHub.Toolkit.Editor
 
         private void ApplyLighting(LightingEnvironmentData data)
         {
-            if (data == null) return;
+            if (data == null)
+            {
+                Debug.LogWarning("[ProjectSettingsSync] ApplyLighting: data is null.");
+                return;
+            }
 
-            try { RenderSettings.ambientMode = (AmbientMode)data.ambientMode; } catch { }
-            try { RenderSettings.defaultReflectionMode = (DefaultReflectionMode)data.defaultReflectionMode; } catch { }
+            Debug.Log($"[ProjectSettingsSync] ApplyLighting: ambientMode={data.ambientMode}, defaultReflectionMode={data.defaultReflectionMode}, defaultReflectionResolution={data.defaultReflectionResolution}");
+
+            try { RenderSettings.ambientMode = (AmbientMode)data.ambientMode; Debug.Log($"[ProjectSettingsSync] ambientMode set to {data.ambientMode}"); } catch (Exception e) { Debug.LogWarning($"[ProjectSettingsSync] ambientMode failed: {e.Message}"); }
+            try { RenderSettings.defaultReflectionMode = (DefaultReflectionMode)data.defaultReflectionMode; Debug.Log($"[ProjectSettingsSync] defaultReflectionMode set to {data.defaultReflectionMode}"); } catch (Exception e) { Debug.LogWarning($"[ProjectSettingsSync] defaultReflectionMode failed: {e.Message}"); }
             RenderSettings.defaultReflectionResolution = data.defaultReflectionResolution;
+            Debug.Log($"[ProjectSettingsSync] defaultReflectionResolution set to {data.defaultReflectionResolution}");
 
             for (int i = 0; i < EditorSceneManager.sceneCount; i++)
             {
@@ -856,6 +882,7 @@ namespace IPhysicsHub.Toolkit.Editor
                 if (scene.isLoaded)
                     EditorSceneManager.MarkSceneDirty(scene);
             }
+            Debug.Log("[ProjectSettingsSync] ApplyLighting finished, scenes marked dirty.");
         }
 
         // ----- Maintainer -----
