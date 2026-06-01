@@ -2,6 +2,17 @@
 
 All notable changes to this package are documented here.
 
+## [4.0.0]
+
+### Added
+- **UI Enhancer — Camera Blocking**: new section in `UIEnhancerWindow` to auto-create the `CameraBlocker` layer and `UIBlocker` tag used by `CameraControllerV5`.
+- **UI Enhancer — Canvas Scaler Defaults**: new button that sets the first Canvas to Scale With Screen Size, reference resolution 1920×1080, match 0.5.
+- **Canvas Scaler auto-configure**: when "Add to Canvas" creates a new Canvas, it now applies the scaler defaults automatically.
+
+### Changed
+- `CameraControllerV5` template: `UIBlocker` tag check now uses `tag == "UIBlocker"` instead of `CompareTag`, preventing console errors when the tag is not defined.
+- `Toggle2D3DWindow` button background alpha updated to match scene values (`80/255` instead of `0.157`).
+
 ## [1.5.0]
 
 ### Added
