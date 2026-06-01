@@ -23,7 +23,7 @@ namespace IPhysicsHub.Toolkit.Editor
         private static void Open()
         {
             var w = GetWindow<UIEnhancerWindow>("UI Enhancer");
-            w.minSize = new Vector2(380, 220);
+            w.minSize = new Vector2(380, 340);
             w.Show();
         }
 
@@ -66,6 +66,30 @@ namespace IPhysicsHub.Toolkit.Editor
             }
             if (!hasCanvas)
                 EditorGUILayout.LabelField("No Canvas in the scene.", EditorStyles.miniLabel);
+
+            EditorGUILayout.Space(8);
+            EditorGUILayout.LabelField("Camera Blocking", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Create the layer and tag used by CameraControllerV5 to block input. Assign the layer to 3D objects manually in the Inspector.",
+                MessageType.None);
+
+            bool layerExists = LayerMask.NameToLayer("CameraBlocker") >= 0;
+            using (new EditorGUI.DisabledScope(layerExists))
+            {
+                if (GUILayout.Button("Create CameraBlocker Layer", GUILayout.Height(ToolkitCore.ButtonH)))
+                    CreateCameraBlockerLayer();
+            }
+            if (layerExists)
+                EditorGUILayout.LabelField("'CameraBlocker' layer already exists.", EditorStyles.miniLabel);
+
+            bool tagExists = TagHelper.TagExists("UIBlocker");
+            using (new EditorGUI.DisabledScope(tagExists))
+            {
+                if (GUILayout.Button("Create UIBlocker Tag", GUILayout.Height(ToolkitCore.ButtonH)))
+                    CreateUIBlockerTag();
+            }
+            if (tagExists)
+                EditorGUILayout.LabelField("'UIBlocker' tag already exists.", EditorStyles.miniLabel);
 
             EditorGUILayout.Space(2);
             DrawStatus();
@@ -184,6 +208,94 @@ namespace IPhysicsHub.Toolkit.Editor
                 _message = "No raycast-target Graphics found on interactable Selectables in the Canvas.";
                 _messageType = MessageType.Warning;
             }
+        }
+
+        // ------------------------------------------------------------------
+        // Camera Blocking helpers
+        // ------------------------------------------------------------------
+
+        private void CreateCameraBlockerLayer()
+        {
+            const string layerName = "CameraBlocker";
+
+            // Check built-in LayerMask API first (fails if not applied yet)
+            if (LayerMask.NameToLayer(layerName) >= 0)
+            {
+                _message = $"'{layerName}' layer already exists at index {LayerMask.NameToLayer(layerName)}.";
+                _messageType = MessageType.Info;
+                return;
+            }
+
+            SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+            SerializedProperty layers = tagManager.FindProperty("layers");
+
+            // Double-check inside the serialized data
+            for (int i = 8; i < layers.arraySize; i++)
+            {
+                SerializedProperty sp = layers.GetArrayElementAtIndex(i);
+                if (sp.stringValue == layerName)
+                {
+                    _message = $"'{layerName}' layer already exists at index {i}.";
+                    _messageType = MessageType.Info;
+                    return;
+                }
+            }
+
+            // Find first empty user slot
+            for (int i = 8; i < layers.arraySize; i++)
+            {
+                SerializedProperty sp = layers.GetArrayElementAtIndex(i);
+                if (string.IsNullOrEmpty(sp.stringValue))
+                {
+                    sp.stringValue = layerName;
+                    tagManager.ApplyModifiedProperties();
+                    _message = $"Created '{layerName}' layer at index {i}. Assign it to 3D objects in the Inspector.";
+                    _messageType = MessageType.Info;
+                    return;
+                }
+            }
+
+            _message = "Could not create layer: all user layer slots (8–31) are full.";
+            _messageType = MessageType.Error;
+        }
+
+        private void CreateUIBlockerTag()
+        {
+            const string tagName = "UIBlocker";
+
+            if (TagHelper.TagExists(tagName))
+            {
+                _message = $"'{tagName}' tag already exists.";
+                _messageType = MessageType.Info;
+                return;
+            }
+
+            SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+            SerializedProperty tags = tagManager.FindProperty("tags");
+
+            tags.InsertArrayElementAtIndex(tags.arraySize);
+            SerializedProperty newTag = tags.GetArrayElementAtIndex(tags.arraySize - 1);
+            newTag.stringValue = tagName;
+            tagManager.ApplyModifiedProperties();
+
+            _message = $"Created '{tagName}' tag. Apply it to UI panels in the Inspector to block camera input.";
+            _messageType = MessageType.Info;
+        }
+    }
+
+    // Small static helper for tag checks (avoids per-frame allocation).
+    internal static class TagHelper
+    {
+        public static bool TagExists(string tag)
+        {
+            SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+            SerializedProperty tags = tagManager.FindProperty("tags");
+            for (int i = 0; i < tags.arraySize; i++)
+            {
+                if (tags.GetArrayElementAtIndex(i).stringValue == tag)
+                    return true;
+            }
+            return false;
         }
     }
 }

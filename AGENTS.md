@@ -5,7 +5,7 @@ Reference for working **on** this package. End-user usage: [`README.md`](README.
 Editor-only, four separate windows under `Tools > iPhysicsHub`:
 - **Camera Updater** — install/capture the controller source; upgrade a controller component.
 - **2D-3D Toggle** — install the toggle files; build a wired toggle button in the scene.
-- **UI Enhancer** — install the UI Hit Area Visualizer script; add it to the scene's Canvas.
+- **UI Enhancer** — install the UI Hit Area Visualizer script; add it to the scene's Canvas; create `CameraBlocker` layer / `UIBlocker` tag for camera input blocking.
 - **Project Settings Sync** — capture current project settings into a profile asset; apply curated WebGL presets or the working profile to the project.
 
 Logic split: shared statics + window base in [`Editor/ToolkitCore.cs`](Editor/ToolkitCore.cs);
