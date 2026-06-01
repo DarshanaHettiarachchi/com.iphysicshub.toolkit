@@ -456,6 +456,13 @@ namespace IPhysicsHub.Toolkit.Editor
             data.defaultReflectionMode = (int)RenderSettings.defaultReflectionMode;
             data.defaultReflectionResolution = RenderSettings.defaultReflectionResolution;
 
+            data.ambientLight = RenderSettings.ambientLight;
+            data.ambientIntensity = RenderSettings.ambientIntensity;
+            data.subtractiveShadowColor = RenderSettings.subtractiveShadowColor;
+            data.reflectionIntensity = RenderSettings.reflectionIntensity;
+            data.reflectionBounces = RenderSettings.reflectionBounces;
+            try { data.reflectionCubemapCompression = (int)LightmapEditorSettings.reflectionCubemapCompression; } catch { }
+
             profile.lighting = data;
         }
 
@@ -875,6 +882,13 @@ namespace IPhysicsHub.Toolkit.Editor
             try { RenderSettings.defaultReflectionMode = (DefaultReflectionMode)data.defaultReflectionMode; Debug.Log($"[ProjectSettingsSync] defaultReflectionMode set to {data.defaultReflectionMode}"); } catch (Exception e) { Debug.LogWarning($"[ProjectSettingsSync] defaultReflectionMode failed: {e.Message}"); }
             RenderSettings.defaultReflectionResolution = data.defaultReflectionResolution;
             Debug.Log($"[ProjectSettingsSync] defaultReflectionResolution set to {data.defaultReflectionResolution}");
+
+            try { RenderSettings.ambientLight = data.ambientLight; Debug.Log($"[ProjectSettingsSync] ambientLight set to {data.ambientLight}"); } catch (Exception e) { Debug.LogWarning($"[ProjectSettingsSync] ambientLight failed: {e.Message}"); }
+            try { RenderSettings.ambientIntensity = data.ambientIntensity; Debug.Log($"[ProjectSettingsSync] ambientIntensity set to {data.ambientIntensity}"); } catch (Exception e) { Debug.LogWarning($"[ProjectSettingsSync] ambientIntensity failed: {e.Message}"); }
+            try { RenderSettings.subtractiveShadowColor = data.subtractiveShadowColor; Debug.Log($"[ProjectSettingsSync] subtractiveShadowColor set to {data.subtractiveShadowColor}"); } catch (Exception e) { Debug.LogWarning($"[ProjectSettingsSync] subtractiveShadowColor failed: {e.Message}"); }
+            try { RenderSettings.reflectionIntensity = data.reflectionIntensity; Debug.Log($"[ProjectSettingsSync] reflectionIntensity set to {data.reflectionIntensity}"); } catch (Exception e) { Debug.LogWarning($"[ProjectSettingsSync] reflectionIntensity failed: {e.Message}"); }
+            try { RenderSettings.reflectionBounces = data.reflectionBounces; Debug.Log($"[ProjectSettingsSync] reflectionBounces set to {data.reflectionBounces}"); } catch (Exception e) { Debug.LogWarning($"[ProjectSettingsSync] reflectionBounces failed: {e.Message}"); }
+            try { LightmapEditorSettings.reflectionCubemapCompression = (ReflectionCubemapCompression)data.reflectionCubemapCompression; Debug.Log($"[ProjectSettingsSync] reflectionCubemapCompression set to {(ReflectionCubemapCompression)data.reflectionCubemapCompression}"); } catch (Exception e) { Debug.LogWarning($"[ProjectSettingsSync] reflectionCubemapCompression failed: {e.Message}"); }
 
             for (int i = 0; i < EditorSceneManager.sceneCount; i++)
             {

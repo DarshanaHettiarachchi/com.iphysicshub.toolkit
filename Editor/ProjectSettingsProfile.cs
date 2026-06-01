@@ -96,9 +96,16 @@ namespace IPhysicsHub.Toolkit.Editor
     [Serializable]
     public class LightingEnvironmentData
     {
-        public int ambientMode;               // Environment Lighting > Source
-        public int defaultReflectionMode;      // Environment Reflections > Source
-        public int defaultReflectionResolution; // Environment Reflections > Resolution
+        public int ambientMode;                  // Environment Lighting > Source
+        public int defaultReflectionMode;         // Environment Reflections > Source
+        public int defaultReflectionResolution;   // Environment Reflections > Resolution
+
+        public Color ambientLight;                // Environment Lighting > Ambient Color
+        public float ambientIntensity;             // Environment Lighting > Intensity Multiplier
+        public Color subtractiveShadowColor;      // Realtime Shadow Color
+        public float reflectionIntensity;         // Environment Reflections > Intensity Multiplier
+        public int reflectionBounces;             // Environment Reflections > Bounces
+        public int reflectionCubemapCompression;  // Environment Reflections > Compression (enum as int)
     }
 
     [Serializable]

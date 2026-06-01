@@ -60,7 +60,23 @@
         "lighting": {
             "ambientMode": 3,
             "defaultReflectionMode": 0,
-            "defaultReflectionResolution": 64
+            "defaultReflectionResolution": 64,
+            "ambientLight": {
+                "r": 0.21223078668117524,
+                "g": 0.21223078668117524,
+                "b": 0.21223078668117524,
+                "a": 1.0
+            },
+            "ambientIntensity": 1.0,
+            "subtractiveShadowColor": {
+                "r": 0.41999998688697817,
+                "g": 0.4779999852180481,
+                "b": 0.6269999742507935,
+                "a": 1.0
+            },
+            "reflectionIntensity": 1.0,
+            "reflectionBounces": 1,
+            "reflectionCubemapCompression": 1
         },
         "build": {
             "scenes": [],
