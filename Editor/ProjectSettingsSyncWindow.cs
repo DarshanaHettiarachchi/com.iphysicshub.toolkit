@@ -289,6 +289,38 @@ namespace IPhysicsHub.Toolkit.Editor
             }
             catch { }
 
+            try { data.webgl.emscriptenArgs = PlayerSettings.WebGL.emscriptenArgs; } catch { }
+            try { data.webgl.modulesDirectory = PlayerSettings.WebGL.modulesDirectory; } catch { }
+            try { data.webgl.template = PlayerSettings.WebGL.template; } catch { }
+            try { data.webgl.analyzeBuildSize = PlayerSettings.WebGL.analyzeBuildSize; } catch { }
+            try { data.webgl.useEmbeddedResources = PlayerSettings.WebGL.useEmbeddedResources; } catch { }
+            try { data.webgl.useWasm = PlayerSettings.WebGL.useWasm; } catch { }
+            try { data.webgl.nameFilesAsHashes = PlayerSettings.WebGL.nameFilesAsHashes; } catch { }
+            try
+            {
+                var prop = typeof(PlayerSettings.WebGL).GetProperty("debugSymbolMode");
+                if (prop != null) data.webgl.debugSymbolMode = prop.GetValue(null).ToString();
+            }
+            catch { }
+            try { data.webgl.showDiagnostics = PlayerSettings.WebGL.showDiagnostics; } catch { }
+            try
+            {
+                var prop = typeof(PlayerSettings.WebGL).GetProperty("wasmStreaming");
+                if (prop != null) data.webgl.wasmStreaming = (bool)prop.GetValue(null);
+            }
+            catch { }
+            try { data.webgl.initialMemorySize = PlayerSettings.WebGL.initialMemorySize; } catch { }
+            try { data.webgl.maximumMemorySize = PlayerSettings.WebGL.maximumMemorySize; } catch { }
+            try
+            {
+                var prop = typeof(PlayerSettings.WebGL).GetProperty("memoryGrowthMode");
+                if (prop != null) data.webgl.memoryGrowthMode = prop.GetValue(null).ToString();
+            }
+            catch { }
+            try { data.webgl.linearMemoryGrowthStep = PlayerSettings.WebGL.linearMemoryGrowthStep; } catch { }
+            try { data.webgl.geometricMemoryGrowthStep = PlayerSettings.WebGL.geometricMemoryGrowthStep; } catch { }
+            try { data.webgl.memoryGeometricGrowthCap = PlayerSettings.WebGL.memoryGeometricGrowthCap; } catch { }
+
             profile.player = data;
         }
 
@@ -359,6 +391,99 @@ namespace IPhysicsHub.Toolkit.Editor
                             level.renderPipelineAssetPath = AssetDatabase.GetAssetPath(p.objectReferenceValue);
                         else
                             level.renderPipelineAssetPath = "";
+
+                        p = levelProp.FindPropertyRelative("shadowProjection");
+                        if (p != null) level.shadowProjection = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("shadowCascades");
+                        if (p != null) level.shadowCascades = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("shadowNearPlaneOffset");
+                        if (p != null) level.shadowNearPlaneOffset = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("shadowCascade2Split");
+                        if (p != null) level.shadowCascade2Split = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("shadowCascade4Split");
+                        if (p != null) level.shadowCascade4Split = p.vector3Value;
+
+                        p = levelProp.FindPropertyRelative("shadowmaskMode");
+                        if (p != null) level.shadowmaskMode = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("softParticles");
+                        if (p != null) level.softParticles = p.boolValue;
+
+                        p = levelProp.FindPropertyRelative("billboardsFaceCameraPosition");
+                        if (p != null) level.billboardsFaceCameraPosition = p.boolValue;
+
+                        p = levelProp.FindPropertyRelative("useLegacyDetailDistribution");
+                        if (p != null) level.useLegacyDetailDistribution = p.boolValue;
+
+                        p = levelProp.FindPropertyRelative("realtimeGICPUUsage");
+                        if (p != null) level.realtimeGICPUUsage = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("enableLODCrossFade");
+                        if (p != null) level.enableLODCrossFade = p.boolValue;
+
+                        p = levelProp.FindPropertyRelative("streamingMipmapsActive");
+                        if (p != null) level.streamingMipmapsActive = p.boolValue;
+
+                        p = levelProp.FindPropertyRelative("streamingMipmapsAddAllCameras");
+                        if (p != null) level.streamingMipmapsAddAllCameras = p.boolValue;
+
+                        p = levelProp.FindPropertyRelative("streamingMipmapsMemoryBudget");
+                        if (p != null) level.streamingMipmapsMemoryBudget = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("streamingMipmapsRenderersPerFrame");
+                        if (p != null) level.streamingMipmapsRenderersPerFrame = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("streamingMipmapsMaxLevelReduction");
+                        if (p != null) level.streamingMipmapsMaxLevelReduction = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("streamingMipmapsMaxFileIORequests");
+                        if (p != null) level.streamingMipmapsMaxFileIORequests = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("particleRaycastBudget");
+                        if (p != null) level.particleRaycastBudget = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("asyncUploadTimeSlice");
+                        if (p != null) level.asyncUploadTimeSlice = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("asyncUploadBufferSize");
+                        if (p != null) level.asyncUploadBufferSize = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("asyncUploadPersistentBuffer");
+                        if (p != null) level.asyncUploadPersistentBuffer = p.boolValue;
+
+                        p = levelProp.FindPropertyRelative("resolutionScalingFixedDPIFactor");
+                        if (p != null) level.resolutionScalingFixedDPIFactor = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("terrainQualityOverrides");
+                        if (p != null) level.terrainQualityOverrides = p.intValue;
+
+                        p = levelProp.FindPropertyRelative("terrainPixelError");
+                        if (p != null) level.terrainPixelError = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("terrainDetailDensityScale");
+                        if (p != null) level.terrainDetailDensityScale = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("terrainBasemapDistance");
+                        if (p != null) level.terrainBasemapDistance = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("terrainDetailDistance");
+                        if (p != null) level.terrainDetailDistance = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("terrainTreeDistance");
+                        if (p != null) level.terrainTreeDistance = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("terrainBillboardStart");
+                        if (p != null) level.terrainBillboardStart = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("terrainFadeLength");
+                        if (p != null) level.terrainFadeLength = p.floatValue;
+
+                        p = levelProp.FindPropertyRelative("terrainMaxTrees");
+                        if (p != null) level.terrainMaxTrees = p.intValue;
 
                         p = levelProp.FindPropertyRelative("excludedTargetPlatforms");
                         if (p != null && p.isArray)
@@ -496,6 +621,27 @@ namespace IPhysicsHub.Toolkit.Editor
             }
             catch { }
 
+            try
+            {
+                var prop = typeof(EditorUserBuildSettings).GetProperty("webGLBuildSubtarget");
+                if (prop != null) data.webGLTextureSubtarget = Convert.ToInt32(prop.GetValue(null));
+            }
+            catch { }
+
+            try
+            {
+                var prop = typeof(EditorUserBuildSettings).GetProperty("webGLUsePreBuiltUnityEngine");
+                if (prop != null) data.webGLUsePreBuiltUnityEngine = (bool)prop.GetValue(null);
+            }
+            catch { }
+
+            try
+            {
+                var prop = typeof(EditorUserBuildSettings).GetProperty("buildWithDeepProfilingSupport");
+                if (prop != null) data.buildWithDeepProfilingSupport = (bool)prop.GetValue(null);
+            }
+            catch { }
+
             profile.build = data;
         }
 
@@ -602,6 +748,46 @@ namespace IPhysicsHub.Toolkit.Editor
                     }
                 }
                 catch { }
+
+                try { PlayerSettings.WebGL.emscriptenArgs = data.webgl.emscriptenArgs; } catch { }
+                try { PlayerSettings.WebGL.modulesDirectory = data.webgl.modulesDirectory; } catch { }
+                try { PlayerSettings.WebGL.template = data.webgl.template; } catch { }
+                try { PlayerSettings.WebGL.analyzeBuildSize = data.webgl.analyzeBuildSize; } catch { }
+                try { PlayerSettings.WebGL.useEmbeddedResources = data.webgl.useEmbeddedResources; } catch { }
+                try { PlayerSettings.WebGL.useWasm = data.webgl.useWasm; } catch { }
+                try { PlayerSettings.WebGL.nameFilesAsHashes = data.webgl.nameFilesAsHashes; } catch { }
+                try
+                {
+                    var prop = typeof(PlayerSettings.WebGL).GetProperty("debugSymbolMode");
+                    if (prop != null && !string.IsNullOrEmpty(data.webgl.debugSymbolMode))
+                    {
+                        var val = Enum.Parse(prop.PropertyType, data.webgl.debugSymbolMode);
+                        prop.SetValue(null, val);
+                    }
+                }
+                catch { }
+                try { PlayerSettings.WebGL.showDiagnostics = data.webgl.showDiagnostics; } catch { }
+                try
+                {
+                    var prop = typeof(PlayerSettings.WebGL).GetProperty("wasmStreaming");
+                    if (prop != null) prop.SetValue(null, data.webgl.wasmStreaming);
+                }
+                catch { }
+                try { PlayerSettings.WebGL.initialMemorySize = data.webgl.initialMemorySize; } catch { }
+                try { PlayerSettings.WebGL.maximumMemorySize = data.webgl.maximumMemorySize; } catch { }
+                try
+                {
+                    var prop = typeof(PlayerSettings.WebGL).GetProperty("memoryGrowthMode");
+                    if (prop != null && !string.IsNullOrEmpty(data.webgl.memoryGrowthMode))
+                    {
+                        var val = Enum.Parse(prop.PropertyType, data.webgl.memoryGrowthMode);
+                        prop.SetValue(null, val);
+                    }
+                }
+                catch { }
+                try { PlayerSettings.WebGL.linearMemoryGrowthStep = data.webgl.linearMemoryGrowthStep; } catch { }
+                try { PlayerSettings.WebGL.geometricMemoryGrowthStep = data.webgl.geometricMemoryGrowthStep; } catch { }
+                try { PlayerSettings.WebGL.memoryGeometricGrowthCap = data.webgl.memoryGeometricGrowthCap; } catch { }
             }
 
             // Recompile-triggering fields LAST
@@ -731,6 +917,99 @@ namespace IPhysicsHub.Toolkit.Editor
                     else
                         Debug.LogWarning($"[ProjectSettingsSync] Quality level {projectIndex} render pipeline asset missing: {level.renderPipelineAssetPath}");
                 }
+
+                p = levelProp.FindPropertyRelative("shadowProjection");
+                if (p != null) p.intValue = level.shadowProjection;
+
+                p = levelProp.FindPropertyRelative("shadowCascades");
+                if (p != null) p.intValue = level.shadowCascades;
+
+                p = levelProp.FindPropertyRelative("shadowNearPlaneOffset");
+                if (p != null) p.floatValue = level.shadowNearPlaneOffset;
+
+                p = levelProp.FindPropertyRelative("shadowCascade2Split");
+                if (p != null) p.floatValue = level.shadowCascade2Split;
+
+                p = levelProp.FindPropertyRelative("shadowCascade4Split");
+                if (p != null) p.vector3Value = level.shadowCascade4Split;
+
+                p = levelProp.FindPropertyRelative("shadowmaskMode");
+                if (p != null) p.intValue = level.shadowmaskMode;
+
+                p = levelProp.FindPropertyRelative("softParticles");
+                if (p != null) p.boolValue = level.softParticles;
+
+                p = levelProp.FindPropertyRelative("billboardsFaceCameraPosition");
+                if (p != null) p.boolValue = level.billboardsFaceCameraPosition;
+
+                p = levelProp.FindPropertyRelative("useLegacyDetailDistribution");
+                if (p != null) p.boolValue = level.useLegacyDetailDistribution;
+
+                p = levelProp.FindPropertyRelative("realtimeGICPUUsage");
+                if (p != null) p.intValue = level.realtimeGICPUUsage;
+
+                p = levelProp.FindPropertyRelative("enableLODCrossFade");
+                if (p != null) p.boolValue = level.enableLODCrossFade;
+
+                p = levelProp.FindPropertyRelative("streamingMipmapsActive");
+                if (p != null) p.boolValue = level.streamingMipmapsActive;
+
+                p = levelProp.FindPropertyRelative("streamingMipmapsAddAllCameras");
+                if (p != null) p.boolValue = level.streamingMipmapsAddAllCameras;
+
+                p = levelProp.FindPropertyRelative("streamingMipmapsMemoryBudget");
+                if (p != null) p.floatValue = level.streamingMipmapsMemoryBudget;
+
+                p = levelProp.FindPropertyRelative("streamingMipmapsRenderersPerFrame");
+                if (p != null) p.intValue = level.streamingMipmapsRenderersPerFrame;
+
+                p = levelProp.FindPropertyRelative("streamingMipmapsMaxLevelReduction");
+                if (p != null) p.intValue = level.streamingMipmapsMaxLevelReduction;
+
+                p = levelProp.FindPropertyRelative("streamingMipmapsMaxFileIORequests");
+                if (p != null) p.intValue = level.streamingMipmapsMaxFileIORequests;
+
+                p = levelProp.FindPropertyRelative("particleRaycastBudget");
+                if (p != null) p.intValue = level.particleRaycastBudget;
+
+                p = levelProp.FindPropertyRelative("asyncUploadTimeSlice");
+                if (p != null) p.intValue = level.asyncUploadTimeSlice;
+
+                p = levelProp.FindPropertyRelative("asyncUploadBufferSize");
+                if (p != null) p.intValue = level.asyncUploadBufferSize;
+
+                p = levelProp.FindPropertyRelative("asyncUploadPersistentBuffer");
+                if (p != null) p.boolValue = level.asyncUploadPersistentBuffer;
+
+                p = levelProp.FindPropertyRelative("resolutionScalingFixedDPIFactor");
+                if (p != null) p.floatValue = level.resolutionScalingFixedDPIFactor;
+
+                p = levelProp.FindPropertyRelative("terrainQualityOverrides");
+                if (p != null) p.intValue = level.terrainQualityOverrides;
+
+                p = levelProp.FindPropertyRelative("terrainPixelError");
+                if (p != null) p.floatValue = level.terrainPixelError;
+
+                p = levelProp.FindPropertyRelative("terrainDetailDensityScale");
+                if (p != null) p.floatValue = level.terrainDetailDensityScale;
+
+                p = levelProp.FindPropertyRelative("terrainBasemapDistance");
+                if (p != null) p.floatValue = level.terrainBasemapDistance;
+
+                p = levelProp.FindPropertyRelative("terrainDetailDistance");
+                if (p != null) p.floatValue = level.terrainDetailDistance;
+
+                p = levelProp.FindPropertyRelative("terrainTreeDistance");
+                if (p != null) p.floatValue = level.terrainTreeDistance;
+
+                p = levelProp.FindPropertyRelative("terrainBillboardStart");
+                if (p != null) p.floatValue = level.terrainBillboardStart;
+
+                p = levelProp.FindPropertyRelative("terrainFadeLength");
+                if (p != null) p.floatValue = level.terrainFadeLength;
+
+                p = levelProp.FindPropertyRelative("terrainMaxTrees");
+                if (p != null) p.intValue = level.terrainMaxTrees;
 
                 p = levelProp.FindPropertyRelative("excludedTargetPlatforms");
                 if (p != null && p.isArray)
@@ -864,6 +1143,27 @@ namespace IPhysicsHub.Toolkit.Editor
             {
                 var prop = typeof(EditorUserBuildSettings).GetProperty("overrideTextureCompression");
                 if (prop != null) prop.SetValue(null, data.overrideTextureCompression);
+            }
+            catch { }
+
+            try
+            {
+                var prop = typeof(EditorUserBuildSettings).GetProperty("webGLBuildSubtarget");
+                if (prop != null) prop.SetValue(null, (UnityEditor.WebGLTextureSubtarget)data.webGLTextureSubtarget);
+            }
+            catch { }
+
+            try
+            {
+                var prop = typeof(EditorUserBuildSettings).GetProperty("webGLUsePreBuiltUnityEngine");
+                if (prop != null) prop.SetValue(null, data.webGLUsePreBuiltUnityEngine);
+            }
+            catch { }
+
+            try
+            {
+                var prop = typeof(EditorUserBuildSettings).GetProperty("buildWithDeepProfilingSupport");
+                if (prop != null) prop.SetValue(null, data.buildWithDeepProfilingSupport);
             }
             catch { }
         }

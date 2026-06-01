@@ -17,13 +17,29 @@
             "webgl": {
                 "memorySize": 0,
                 "compressionFormat": "Brotli",
-                "linkerTarget": "Wasm",
+                "linkerTarget": "Both",
                 "exceptionSupport": "None",
                 "dataCaching": false,
                 "decompressionFallback": false,
                 "powerPreference": "Default",
                 "threadsSupport": false,
-                "wasmArithmeticExceptions": "Throw"
+                "wasmArithmeticExceptions": "Throw",
+                "emscriptenArgs": "",
+                "modulesDirectory": "",
+                "template": "APPLICATION:Default",
+                "analyzeBuildSize": false,
+                "useEmbeddedResources": false,
+                "useWasm": true,
+                "nameFilesAsHashes": false,
+                "debugSymbolMode": "Off",
+                "showDiagnostics": false,
+                "wasmStreaming": false,
+                "initialMemorySize": 32,
+                "maximumMemorySize": 256,
+                "memoryGrowthMode": "Geometric",
+                "linearMemoryGrowthStep": 16,
+                "geometricMemoryGrowthStep": 0.20000000298023225,
+                "memoryGeometricGrowthCap": 96
             }
         },
         "quality": {
@@ -43,6 +59,41 @@
                     "realtimeReflectionProbes": false,
                     "skinWeights": 4,
                     "renderPipelineAssetPath": "",
+                    "shadowProjection": 1,
+                    "shadowCascades": 4,
+                    "shadowNearPlaneOffset": 3.0,
+                    "shadowCascade2Split": 0.3333333432674408,
+                    "shadowCascade4Split": {
+                        "x": 0.06666667014360428,
+                        "y": 0.20000000298023225,
+                        "z": 0.46666666865348818
+                    },
+                    "shadowmaskMode": 1,
+                    "softParticles": true,
+                    "billboardsFaceCameraPosition": false,
+                    "useLegacyDetailDistribution": false,
+                    "realtimeGICPUUsage": 100,
+                    "enableLODCrossFade": true,
+                    "streamingMipmapsActive": false,
+                    "streamingMipmapsAddAllCameras": true,
+                    "streamingMipmapsMemoryBudget": 512.0,
+                    "streamingMipmapsRenderersPerFrame": 512,
+                    "streamingMipmapsMaxLevelReduction": 2,
+                    "streamingMipmapsMaxFileIORequests": 1024,
+                    "particleRaycastBudget": 4096,
+                    "asyncUploadTimeSlice": 2,
+                    "asyncUploadBufferSize": 16,
+                    "asyncUploadPersistentBuffer": true,
+                    "resolutionScalingFixedDPIFactor": 1.0,
+                    "terrainQualityOverrides": 0,
+                    "terrainPixelError": 1.0,
+                    "terrainDetailDensityScale": 1.0,
+                    "terrainBasemapDistance": 1000.0,
+                    "terrainDetailDistance": 80.0,
+                    "terrainTreeDistance": 5000.0,
+                    "terrainBillboardStart": 50.0,
+                    "terrainFadeLength": 5.0,
+                    "terrainMaxTrees": 50,
                     "excludedTargetPlatforms": [
                         "Standalone",
                         "Server"
@@ -84,7 +135,10 @@
             "allowDebugging": false,
             "connectProfiler": false,
             "overrideMaxTextureSize": 0,
-            "overrideTextureCompression": 0
+            "overrideTextureCompression": 0,
+            "webGLTextureSubtarget": 4,
+            "webGLUsePreBuiltUnityEngine": false,
+            "buildWithDeepProfilingSupport": false
         }
     }
 }

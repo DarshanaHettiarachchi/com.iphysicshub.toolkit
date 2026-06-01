@@ -42,6 +42,23 @@ namespace IPhysicsHub.Toolkit.Editor
         public string powerPreference;
         public bool threadsSupport;
         public string wasmArithmeticExceptions;
+
+        public string emscriptenArgs;
+        public string modulesDirectory;
+        public string template;
+        public bool analyzeBuildSize;
+        public bool useEmbeddedResources;
+        public bool useWasm;
+        public bool nameFilesAsHashes;
+        public string debugSymbolMode;
+        public bool showDiagnostics;
+        public bool wasmStreaming;
+        public int initialMemorySize;
+        public int maximumMemorySize;
+        public string memoryGrowthMode;
+        public int linearMemoryGrowthStep;
+        public float geometricMemoryGrowthStep;
+        public int memoryGeometricGrowthCap;
     }
 
     [Serializable]
@@ -68,6 +85,38 @@ namespace IPhysicsHub.Toolkit.Editor
         public bool realtimeReflectionProbes;
         public int skinWeights;
         public string renderPipelineAssetPath;
+        public int shadowProjection;
+        public int shadowCascades;
+        public float shadowNearPlaneOffset;
+        public float shadowCascade2Split;
+        public Vector3 shadowCascade4Split;
+        public int shadowmaskMode;
+        public bool softParticles;
+        public bool billboardsFaceCameraPosition;
+        public bool useLegacyDetailDistribution;
+        public int realtimeGICPUUsage;
+        public bool enableLODCrossFade;
+        public bool streamingMipmapsActive;
+        public bool streamingMipmapsAddAllCameras;
+        public float streamingMipmapsMemoryBudget;
+        public int streamingMipmapsRenderersPerFrame;
+        public int streamingMipmapsMaxLevelReduction;
+        public int streamingMipmapsMaxFileIORequests;
+        public int particleRaycastBudget;
+        public int asyncUploadTimeSlice;
+        public int asyncUploadBufferSize;
+        public bool asyncUploadPersistentBuffer;
+        public float resolutionScalingFixedDPIFactor;
+        public int terrainQualityOverrides;
+        public float terrainPixelError;
+        public float terrainDetailDensityScale;
+        public float terrainBasemapDistance;
+        public float terrainDetailDistance;
+        public float terrainTreeDistance;
+        public float terrainBillboardStart;
+        public float terrainFadeLength;
+        public int terrainMaxTrees;
+
         public string[] excludedTargetPlatforms;
     }
 
@@ -117,6 +166,9 @@ namespace IPhysicsHub.Toolkit.Editor
         public bool connectProfiler;
         public int overrideMaxTextureSize;
         public int overrideTextureCompression;
+        public int webGLTextureSubtarget;
+        public bool webGLUsePreBuiltUnityEngine;
+        public bool buildWithDeepProfilingSupport;
     }
 
     [Serializable]
