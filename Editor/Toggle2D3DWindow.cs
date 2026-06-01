@@ -206,7 +206,7 @@ namespace IPhysicsHub.Toolkit.Editor
             rt.anchoredPosition = new Vector2(-92, -92);
             rt.sizeDelta = new Vector2(80, 80);
             var bg = buttonGo.GetComponent<Image>();
-            bg.color = new Color(0f, 0f, 0f, 0.157f);
+            bg.color = new Color(0f, 0f, 0f, 80f / 255f);
             var button = buttonGo.GetComponent<Button>();
             button.targetGraphic = bg;
 
